@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import type { Patient } from '../../types/patient';
 import type {
@@ -11,6 +11,8 @@ import {
   useCreatePrescription,
   useUpdatePrescription,
 } from '../../hooks/usePrescriptions';
+import { useReactToPrint } from 'react-to-print';
+import { PrintablePrescription } from '../../components/printing/PrintablePrescription';
 
 export const PatientPrescriptions: React.FC = () => {
   const { patient } = useOutletContext<{ patient: Patient }>();
@@ -382,11 +384,29 @@ const PrescriptionView: React.FC<{
   prescription: Prescription;
   patient: Patient;
   onEdit: () => void;
-}> = ({ prescription, onEdit }) => {
+}> = ({ prescription, patient, onEdit }) => {
+  const componentRef = useRef<HTMLDivElement>(null);
   const items = prescription.details?.prescriptions || [];
   const createdDate = new Date(prescription.created_at).toLocaleString('en-US', {
     dateStyle: 'medium',
     timeStyle: 'short',
+  });
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `Prescription_${patient.name.replace(/\s+/g, '_')}_${prescription.id.slice(0, 8)}`,
+    pageStyle: `
+      @page {
+        size: A4 portrait;
+        margin: 12mm 15mm;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    `,
   });
 
   return (
@@ -414,7 +434,7 @@ const PrescriptionView: React.FC<{
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => window.print()}
+            onClick={() => handlePrint()}
             className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 transition-colors"
           >
             🖨 Print Slip
@@ -471,6 +491,15 @@ const PrescriptionView: React.FC<{
           {prescription.details.notes}
         </div>
       )}
+
+      {/* Hidden offscreen container holding the printable layout */}
+      <div style={{ display: 'none' }}>
+        <PrintablePrescription
+          ref={componentRef}
+          patient={patient}
+          prescription={prescription}
+        />
+      </div>
     </div>
   );
 };

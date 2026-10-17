@@ -3,7 +3,7 @@ import { useParams, NavLink, Outlet, Link } from 'react-router-dom';
 import { usePatient } from '../../hooks/usePatients';
 
 const patientTabs = [
-  { label: 'Details', path: '' },
+  { label: 'Details', path: 'details' },
   { label: 'Timeline', path: 'timeline' },
   { label: 'Visit Notes', path: 'visit-notes' },
   { label: 'Treatment Plans', path: 'treatment-plans' },

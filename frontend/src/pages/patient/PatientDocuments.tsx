@@ -331,11 +331,20 @@ const ThumbnailView: React.FC<{
 
         <div className="text-[11px] text-slate-400 mt-2 border-t border-slate-50 pt-2 flex justify-between items-center">
           <span>{new Date(doc.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}</span>
-          <a
+          {/* <a
             href={publicUrl}
             target="_blank"
             rel="noopener noreferrer"
             download
+            className="text-blue-600 hover:underline"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Download
+          </a> */}
+
+          {/* Appending ?download forces Supabase to return Content-Disposition: attachment */}
+          <a
+            href={`${publicUrl}?download=${encodeURIComponent(doc.name || 'document')}`}
             className="text-blue-600 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >

@@ -6,7 +6,8 @@
         "db:new": "supabase migration new",
         "db:push": "supabase db push",
         "db:pull": "supabase db pull",
-        "db:types": "supabase gen types typescript --project-id nwxolzjldlrwdrbkseka > frontend/src/types/database.types.ts"
+        "db:types": "supabase gen types typescript --project-id nwxolzjldlrwdrbkseka > frontend/src/types/database.types.ts",
+        "db:types_filepath": "supabase gen types typescript --project-id nwxolzjldlrwdrbkseka"
     },
     "devDependencies": {
         "supabase": "^2.117.0"

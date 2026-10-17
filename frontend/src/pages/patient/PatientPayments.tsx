@@ -427,13 +427,14 @@ export const PatientPayments: React.FC = () => {
                       <td className="py-3 px-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5">
                           {/* Print Slip */}
-                          <button
+                          <InvoiceRowAction patient={patient} invoice={inv}/>
+                          {/* <button
                             type="button"
                             onClick={() => setActivePrintInvoice(inv)}
                             className="px-2.5 py-1 text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded font-medium"
                           >
                             🖨 Print
-                          </button>
+                          </button> */}
 
                           {inv.status !== 'cancelled' && (
                             <>

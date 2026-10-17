@@ -10,6 +10,7 @@ import type {
 import type { Json, Database } from '../types/database.types';
 
 type ReminderUpdate = Database['public']['Tables']['reminder']['Update'];
+type ReminderInsert = Database['public']['Tables']['reminder']['Insert'];
 
 interface UseRemindersOptions {
   status?: ReminderStatus | 'all';
@@ -65,8 +66,7 @@ export function useCreateReminder(clinicId: string) {
           status: input.status ?? 'active',
           type: input.type,
           details: input.details as Json,
-          due_at: "",
-        })
+        } as ReminderInsert)
         .select()
         .single();
 

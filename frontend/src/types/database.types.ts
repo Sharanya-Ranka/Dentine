@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   graphql_public: {
     Tables: {
@@ -96,6 +96,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      app_user: {
+        Row: {
+          created_at: string
+          email: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       appointment: {
         Row: {
@@ -822,6 +846,48 @@ export type Database = {
           },
         ]
       }
+      user_clinic_association: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["clinic_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["clinic_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["clinic_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_clinic_association_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinic"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_clinic_association_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       visit_note: {
         Row: {
           clinic_id: string
@@ -882,7 +948,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      clinic_role: "owner" | "non-owner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1012,6 +1078,8 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      clinic_role: ["owner", "non-owner"],
+    },
   },
 } as const

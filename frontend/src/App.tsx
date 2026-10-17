@@ -55,8 +55,8 @@ export default function App() {
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="patients" element={<AllPatients />} />
             <Route path="patients/:id" element={<PatientPage />} >
-              {/* <Route index element={<Navigate to="details" replace />} /> */}
-              <Route index element={<PatientDetails />} />
+              <Route index element={<Navigate to="details" replace />} />
+              <Route path="details" element={<PatientDetails />} />
               <Route path="timeline" element={<PatientTimeline />} />
               <Route path="visit-notes" element={<PatientVisitNotes />} />
               <Route path="treatment-plans" element={<PatientTreatmentPlans />} />
