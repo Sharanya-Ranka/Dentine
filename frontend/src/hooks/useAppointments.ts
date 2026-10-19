@@ -20,8 +20,8 @@ export function useAppointments(startDateIso: string, endDateIso: string) {
             name,
             details
           ),
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)

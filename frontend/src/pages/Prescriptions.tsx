@@ -7,6 +7,7 @@ import {
   useUpdateGlobalPrescription,
 } from '../hooks/useAllPrescriptions';
 import { usePatients } from '../hooks/usePatients';
+import { useClinicNavigation } from '../hooks/useClinicNavigation';
 
 export const Prescriptions: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,6 +17,8 @@ export const Prescriptions: React.FC = () => {
 
   const { data: prescriptions, isLoading, isError, error } = useAllPrescriptions(searchTerm);
 
+  const {paths} = useClinicNavigation();
+  
   // Client-side filtering matching patient name, medication name, or doctor name
   const filteredPrescriptions = prescriptions?.filter((rx) => {
     if (!searchTerm.trim()) return true;
@@ -116,7 +119,7 @@ export const Prescriptions: React.FC = () => {
                         {rx.patient ? (
                           <div>
                             <Link
-                              to={`/patients/${rx.patient.id}/prescriptions`}
+                              to={paths.patientDetail(rx.patient!.id)}
                               className="font-semibold text-blue-600 hover:underline block"
                             >
                               {rx.patient.name}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, NavLink, Outlet, Link } from 'react-router-dom';
 import { usePatient } from '../../hooks/usePatients';
+import { useClinicNavigation } from '../../hooks/useClinicNavigation';
 
 const patientTabs = [
   { label: 'Details', path: 'details' },
@@ -16,6 +17,7 @@ const patientTabs = [
 export const PatientPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: patient, isLoading, isError, error } = usePatient(id);
+  const { paths } = useClinicNavigation();
 
   if (isLoading) {
     return (
@@ -31,7 +33,7 @@ export const PatientPage: React.FC = () => {
         <div className="p-4 bg-red-50 text-red-700 text-sm rounded-md border border-red-200">
           {error instanceof Error ? error.message : 'Patient not found'}
         </div>
-        <Link to="/patients" className="inline-block mt-4 text-sm text-blue-600 hover:underline">
+        <Link to={paths.patients} className="inline-block mt-4 text-sm text-blue-600 hover:underline">
           ← Return to All Patients
         </Link>
       </div>
@@ -48,7 +50,7 @@ export const PatientPage: React.FC = () => {
       {/* Top Breadcrumb & Summary Header */}
       <div>
         <Link
-          to="/patients"
+          to={paths.patients}
           className="text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors inline-block mb-3"
         >
           ← Back to Patient Directory

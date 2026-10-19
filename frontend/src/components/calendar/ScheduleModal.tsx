@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import type { AppointmentType, AppointmentStatus } from '../../types/appointment';
 import { useCreateAppointment } from '../../hooks/useAppointments';
 import { usePatients } from '../../hooks/usePatients';
-import { useClinicId, useDoctorId } from '../../hooks/useSession';
+// import { useClinicId } from '../../hooks/useSession';
 import { istDateTimeToUTC } from '../../utils/istDateUtils';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { useParams } from 'react-router-dom';
 
 interface ScheduleModalProps {
   initialDate: Date;
@@ -16,8 +18,8 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
   initialHour,
   onClose,
 }) => {
-  const clinicId = useClinicId();
-  const doctorId = useDoctorId();
+  const clinicId = useParams().clinicId || '';
+  const doctorId = useAuthStore().user?.id || null;
   const { data: patients, isLoading: isLoadingPatients } = usePatients();
   const createMutation = useCreateAppointment();
 

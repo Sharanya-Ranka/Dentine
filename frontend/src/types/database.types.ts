@@ -176,8 +176,8 @@ export type Database = {
             foreignKeyName: "appointment_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "appointment_patient_id_fkey"
@@ -945,7 +945,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_clinic_with_owner: {
+        Args: { clinic_name: string }
+        Returns: string
+      }
+      user_is_member: {
+        Args: { p_clinic_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      user_is_owner: {
+        Args: { p_clinic_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       clinic_role: "owner" | "non-owner"

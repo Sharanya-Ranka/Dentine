@@ -17,13 +17,9 @@ interface UseRemindersOptions {
   type?: ReminderType | 'all';
 }
 
-export function useReminders(clinicId: string, options: UseRemindersOptions = {}) {
-  const { status = 'active', type = 'all' } = options;
-
-  return useQuery({
-    queryKey: ['reminders', clinicId, status, type],
-    queryFn: async (): Promise<Reminder[]> => {
-      let query = supabase
+async function fetchAllReminders(clinicId: string): Promise<Reminder[]> {
+  console.log('Fetching reminders for clinicId:', clinicId);
+  const { data, error } = await supabase
         .from('reminder')
         .select(`
           *,
@@ -35,19 +31,19 @@ export function useReminders(clinicId: string, options: UseRemindersOptions = {}
         .eq('clinic_id', clinicId)
         .order('due_at', { ascending: true });
 
-      if (status !== 'all') {
-        query = query.eq('status', status);
-      }
+  if (error) throw new Error(error.message);
+  return (data as Reminder[]) || [];
+}
 
-      if (type !== 'all') {
-        query = query.eq('type', type);
-      }
 
-      const { data, error } = await query;
-      if (error) throw new Error(error.message);
-      return (data as Reminder[]) || [];
-    },
+export function useReminders(clinicId: string, options: UseRemindersOptions = {}) {
+  const { status = 'active', type = 'all' } = options;
+
+  return useQuery({
+    queryKey: ['reminders', clinicId],
+    queryFn: () => fetchAllReminders(clinicId),
     enabled: Boolean(clinicId),
+    select: (reminders) => reminders.filter((r) => (status === 'all' || r.status === status) && (type === 'all' || r.type === type)),
   });
 }
 

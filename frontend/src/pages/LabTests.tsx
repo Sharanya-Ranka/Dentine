@@ -9,6 +9,7 @@ import {
 } from '../hooks/useAllLabTests';
 import { usePatients } from '../hooks/usePatients';
 import { useClinicId, useDoctorId } from '../hooks/useSession';
+import { useClinicNavigation } from '../hooks/useClinicNavigation';
 
 type FilterTab = 'all' | 'pending' | 'in_progress' | 'completed' | 'cancelled';
 
@@ -41,6 +42,7 @@ export const LabTests: React.FC = () => {
   const { data: labTests, isLoading, isError, error } = useAllLabTests(clinicId, searchTerm);
   const { data: catalog = [] } = useLabProcedureCatalog(clinicId);
   const updateMutation = useUpdateGlobalLabTest();
+  const { paths } = useClinicNavigation();
 
   // Filter by status tab and search term (procedure, lab vendor, patient name)
   const filteredTests = useMemo(() => {
@@ -187,7 +189,7 @@ export const LabTests: React.FC = () => {
                       <td className="px-4 py-3.5 text-slate-700">
                         {test.patient ? (
                           <Link
-                            to={`/patients/${test.patient.id}/lab-tests`}
+                            to={paths.patientDetail(test.patient.id)}
                             className="font-medium text-blue-600 hover:underline"
                           >
                             {test.patient.name}
