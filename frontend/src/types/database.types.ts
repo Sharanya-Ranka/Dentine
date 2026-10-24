@@ -78,8 +78,8 @@ export type Database = {
             foreignKeyName: "action_log_actor_id_fkey"
             columns: ["actor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "action_log_clinic_id_fkey"
@@ -349,6 +349,60 @@ export type Database = {
           },
         ]
       }
+      invitation: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          invitee_email: string
+          inviter_id: string
+          role: string
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invitee_email: string
+          inviter_id: string
+          role?: string
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invitee_email?: string
+          inviter_id?: string
+          role?: string
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invitation_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinic"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitation_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: false
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       invoice: {
         Row: {
           clinic_id: string
@@ -532,8 +586,8 @@ export type Database = {
             foreignKeyName: "lab_test_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "lab_test_lab_procedure_id_fkey"
@@ -684,8 +738,8 @@ export type Database = {
             foreignKeyName: "prescription_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "prescription_patient_id_fkey"
@@ -741,12 +795,12 @@ export type Database = {
           created_at: string
           details: Json
           due_at: string
-          employee_id: string | null
           id: string
           remind_in_days: number
           status: string
           type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           asof_datetime: string
@@ -754,12 +808,12 @@ export type Database = {
           created_at?: string
           details?: Json
           due_at: string
-          employee_id?: string | null
           id?: string
           remind_in_days?: number
           status?: string
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           asof_datetime?: string
@@ -767,12 +821,12 @@ export type Database = {
           created_at?: string
           details?: Json
           due_at?: string
-          employee_id?: string | null
           id?: string
           remind_in_days?: number
           status?: string
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -783,11 +837,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "reminder_employee_id_fkey"
-            columns: ["employee_id"]
+            foreignKeyName: "reminder_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -834,8 +888,8 @@ export type Database = {
             foreignKeyName: "treatment_plan_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "treatment_plan_patient_id_fkey"
@@ -928,8 +982,8 @@ export type Database = {
             foreignKeyName: "visit_note_doctor_id_fkey"
             columns: ["doctor_id"]
             isOneToOne: false
-            referencedRelation: "employee"
-            referencedColumns: ["id"]
+            referencedRelation: "app_user"
+            referencedColumns: ["user_id"]
           },
           {
             foreignKeyName: "visit_note_patient_id_fkey"
@@ -945,9 +999,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_clinic_invitation: { Args: { p_token: string }; Returns: Json }
+      create_clinic_invitation: {
+        Args: { p_clinic_id: string; p_invitee_email: string; p_role?: string }
+        Returns: string
+      }
       create_clinic_with_owner: {
         Args: { clinic_name: string }
         Returns: string
+      }
+      get_invitation_preview: {
+        Args: { p_token: string }
+        Returns: {
+          clinic_name: string
+          invitee_email: string
+          inviter_name: string
+          is_valid: boolean
+          role: string
+        }[]
+      }
+      get_my_pending_invitations: {
+        Args: never
+        Returns: {
+          clinic_id: string
+          clinic_name: string
+          created_at: string
+          invitation_id: string
+          inviter_name: string
+          role: string
+        }[]
+      }
+      send_invitation_email: {
+        Args: { p_invitation_id: string }
+        Returns: undefined
       }
       user_is_member: {
         Args: { p_clinic_id: string; p_user_id: string }

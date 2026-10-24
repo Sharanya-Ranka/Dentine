@@ -21,6 +21,28 @@ export type Employee = {
   updated_at: string;
 };
 
+export type ClinicRole = 'owner' | 'non-owner';
+
+export interface AppUserSummary {
+  user_id: string;
+  name: string | null;
+  email: string | null;
+}
+
+export interface ClinicMember {
+  id: string;
+  user_id: string;
+  clinic_id: string;
+  role: ClinicRole;
+  created_at: string;
+  app_user: AppUserSummary | null;
+}
+
+export interface CreateInvitationInput {
+  employee_email: string;
+  role: ClinicRole;
+}
+
 export type Procedure = {
   id: string;
   clinic_id: string;

@@ -35,8 +35,8 @@ export function useAllLabTests(clinicId: string, searchQuery: string = '') {
             name,
             details
           ),
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
-import type { Employee, Procedure, Lab,  } from '../types/admin';
+import type { Employee, Procedure, Lab, ClinicMember, CreateInvitationInput  } from '../types/admin';
 
 // ============================================================================
 // EMPLOYEES
@@ -63,6 +63,57 @@ export function useSaveEmployee(clinicId: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin_employees', clinicId] });
+    },
+  });
+}
+
+
+export function useClinicMembers(clinicId: string) {
+  return useQuery({
+    queryKey: ['clinic_members', clinicId],
+    queryFn: async (): Promise<ClinicMember[]> => {
+      const { data, error } = await supabase
+        .from('user_clinic_association')
+        .select(`
+          id,
+          user_id,
+          clinic_id,
+          role,
+          created_at,
+          app_user:user_id (
+            user_id,
+            name,
+            email
+          )
+        `)
+        .eq('clinic_id', clinicId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw new Error(error.message);
+      return (data as unknown as ClinicMember[]) || [];
+    },
+    enabled: Boolean(clinicId),
+  });
+}
+
+export function useInviteMember(clinicId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ employee_email, role }: CreateInvitationInput) => {
+      const { data, error } = await supabase.rpc('create_clinic_invitation', {
+        p_clinic_id: clinicId,
+        p_invitee_email: employee_email.trim().toLowerCase(),
+        p_role: role,
+      });
+
+      if (error) throw new Error(error.message);
+      return data as string; // Returns the generated invitation UUID
+    },
+    onSuccess: () => {
+      // Invalidate members and issued invitations
+      queryClient.invalidateQueries({ queryKey: ['clinic_members', clinicId] });
+      queryClient.invalidateQueries({ queryKey: ['clinic_invitations', clinicId] });
     },
   });
 }

@@ -16,7 +16,7 @@ export type ReminderDetails = {
 export type Reminder = {
   id: string;
   clinic_id: string;
-  employee_id: string | null;
+  user_id: string | null;
   asof_datetime: string;
   remind_in_days: number;
   due_at: string;
@@ -33,7 +33,7 @@ export type Reminder = {
 
 export type CreateReminderInput = {
   clinic_id: string;
-  employee_id?: string | null;
+  user_id?: string | null;
   asof_datetime: string;
   remind_in_days?: number;
   type: ReminderType;

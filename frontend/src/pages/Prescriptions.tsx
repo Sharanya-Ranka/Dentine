@@ -15,23 +15,13 @@ export const Prescriptions: React.FC = () => {
   const [viewingRx, setViewingRx] = useState<Prescription | null>(null);
   const [editingRx, setEditingRx] = useState<Prescription | null>(null);
 
-  const { data: prescriptions, isLoading, isError, error } = useAllPrescriptions(searchTerm);
+  const { clinicId } = useClinicNavigation();
+  const { data: prescriptions, isLoading, isError, error } = useAllPrescriptions(clinicId, searchTerm);
 
   const {paths} = useClinicNavigation();
   
   // Client-side filtering matching patient name, medication name, or doctor name
-  const filteredPrescriptions = prescriptions?.filter((rx) => {
-    if (!searchTerm.trim()) return true;
-    const query = searchTerm.toLowerCase();
-
-    const matchesPatient = rx.patient?.name?.toLowerCase().includes(query);
-    const matchesDoctor = rx.doctor?.name?.toLowerCase().includes(query);
-    const matchesMeds = rx.details?.prescriptions?.some((item) =>
-      item.name.toLowerCase().includes(query)
-    );
-
-    return matchesPatient || matchesDoctor || matchesMeds;
-  });
+  const filteredPrescriptions = prescriptions;
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-6">

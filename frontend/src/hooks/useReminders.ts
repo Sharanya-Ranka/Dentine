@@ -23,8 +23,8 @@ async function fetchAllReminders(clinicId: string): Promise<Reminder[]> {
         .from('reminder')
         .select(`
           *,
-          employee:employee (
-            id,
+          employee:app_user (
+            id:user_id,
             name
           )
         `)
@@ -56,7 +56,7 @@ export function useCreateReminder(clinicId: string) {
         .from('reminder')
         .insert({
           clinic_id: input.clinic_id,
-          employee_id: input.employee_id || null,
+          user_id : input.user_id || null,
           asof_datetime: input.asof_datetime,
           remind_in_days: input.remind_in_days ?? 0,
           status: input.status ?? 'active',

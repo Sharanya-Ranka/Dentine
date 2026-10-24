@@ -66,8 +66,8 @@ export function useLabTests(patientId: string | undefined) {
             name,
             details
           ),
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)
@@ -106,8 +106,8 @@ export function useAllLabTests(clinicId: string, searchQuery: string = '') {
             name,
             details
           ),
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)

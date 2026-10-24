@@ -13,8 +13,8 @@ export function useVisitNotes(patientId: string | undefined) {
         .from('visit_note')
         .select(`
           *,
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)

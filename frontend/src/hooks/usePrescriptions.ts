@@ -13,8 +13,8 @@ export function usePrescriptions(patientId: string | undefined) {
         .from('prescription')
         .select(`
           *,
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)

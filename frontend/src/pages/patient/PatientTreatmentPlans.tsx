@@ -15,6 +15,7 @@ import {
   useUpdateTreatmentPlan,
 } from '../../hooks/useTreatmentPlans';
 import { useProcedures } from '../../hooks/useAdmin';
+import { useDoctorId } from '../../hooks/useSession';
 import { ToothPickerModal } from '../../components/dental/ToothPickerModal';
 
 // Helper to format currency
@@ -137,6 +138,7 @@ export const TreatmentPlanForm: React.FC<TreatmentPlanFormProps> = ({
 
   // Fetch clinic procedure fee master
   const { data: procedureCatalog = [] } = useProcedures(clinicId);
+  const doctorId = useDoctorId();
 
   // Form State (prefilled if editing, defaulted if creating)
   const [title, setTitle] = useState(initialPlan?.details?.title || '');
@@ -347,7 +349,7 @@ export const TreatmentPlanForm: React.FC<TreatmentPlanFormProps> = ({
       if (isCreate || !initialPlan) {
         await createMutation.mutateAsync({
           clinicId,
-          doctorId: null,
+          doctorId,
           status,
           details: detailsPayload,
         });
@@ -665,7 +667,7 @@ const HistoricalPlanCard: React.FC<{
   return (
     <div className="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
       {!isEditing ? (
-        <PlanView plan={plan} onEdit={() => setIsEditing(true)} />
+        <PlanView plan={plan} patientId={patientId} clinicId={clinicId} onEdit={() => setIsEditing(true)} />
       ) : (
         <TreatmentPlanForm
           initialPlan={plan}
@@ -683,8 +685,41 @@ const HistoricalPlanCard: React.FC<{
 // ============================================================================
 const PlanView: React.FC<{
   plan: TreatmentPlan;
+  patientId: string;
+  clinicId: string;
   onEdit: () => void;
-}> = ({ plan, onEdit }) => {
+}> = ({ plan, patientId, clinicId, onEdit }) => {
+
+  const createMutation = useCreateTreatmentPlan(patientId);
+  const doctorId = useDoctorId();
+
+  const handleCopy = async () => {
+    const previousTitle = plan.details?.title?.trim() || 'Treatment Plan';
+    const newTitle = `Copy of ${previousTitle}`;
+
+    const detailsPayload: TreatmentPlanDetails = {
+      ...(plan.details || {}),
+      title: newTitle,
+      // Regenerate step IDs for uniqueness in the copied plan
+      steps: (plan.details?.steps || []).map((step) => ({
+        ...step,
+        step_id: crypto.randomUUID(),
+      })),
+    };
+
+    try {
+      await createMutation.mutateAsync({
+        clinicId,
+        doctorId,
+        status: plan.status,
+        details: detailsPayload,
+      });
+    } catch (err: unknown) {
+      console.error('Failed to copy treatment plan:', err);
+    }
+  };
+
+
   const createdFormatted = new Date(plan.created_at).toLocaleString('en-IN', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -755,8 +790,16 @@ const PlanView: React.FC<{
           </div>
           <button
             type="button"
+            onClick={handleCopy}
+            disabled={createMutation.isPending}
+            className="px-3 py-1.5 text-xs font-medium disabled:opacity-50  text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 transition-colors"
+          >
+            {createMutation.isPending ? 'Copying...' : 'Copy to New'}
+          </button>
+          <button
+            type="button"
             onClick={onEdit}
-            className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 rounded border border-slate-200 transition-colors"
+            className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
           >
             Edit Plan
           </button>

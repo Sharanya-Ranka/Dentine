@@ -54,7 +54,7 @@ export const CalendarPage: React.FC = () => {
     return d.toISOString();
   }, [weekDays]);
 
-  const { data: appointments,  } = useAppointments(startWindowIso, endWindowIso);
+  const { data: appointments, isLoading } = useAppointments(startWindowIso, endWindowIso);
 
   // Auto-scroll to 8:00 AM (Active clinic opening hour) on mount
   useEffect(() => {
@@ -62,7 +62,7 @@ export const CalendarPage: React.FC = () => {
       // 8th hour row * 64px row height
       scrollContainerRef.current.scrollTop = 8 * 64;
     }
-  }, []);
+  }, [isLoading]);
 
   const handlePrevWeek = () => {
     const next = new Date(referenceDate);
@@ -175,7 +175,13 @@ export const CalendarPage: React.FC = () => {
         })}
       </div>
 
+      {isLoading && (
+        <div className="p-8 text-center text-slate-500">
+          Loading appointments...
+        </div>
+      )}
       {/* Main 24-Hour Scrollable Calendar Grid */}
+      {!isLoading &&
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto bg-slate-100/50 border border-slate-200 select-none relative"
@@ -281,6 +287,7 @@ export const CalendarPage: React.FC = () => {
           })}
         </div>
       </div>
+        }
 
       {/* Modal: New Booking on Slot Click */}
       {selectedSlot && (

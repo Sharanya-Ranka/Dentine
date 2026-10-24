@@ -35,6 +35,7 @@ import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminEmployees } from './pages/admin/AdminEmployees';
 import { AdminProcedures } from './pages/admin/AdminProcedures';
 import { AdminLabInfo } from './pages/admin/AdminLabInfo';
+import { AcceptInvitePage } from './pages/invitation/AcceptInvitePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,7 +62,7 @@ export default function App() {
         <Routes>
           {/* 1. Public Authentication Route */}
           <Route path="/login" element={<AuthView />} />
-
+          <Route path="/invite" element={<AcceptInvitePage />} />
           {/* 2. Authenticated Boundary */}
           <Route element={<RequireAuth />}>
             <Route element={<AppLayout />}>

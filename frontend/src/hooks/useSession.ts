@@ -1,7 +1,8 @@
+import { useParams } from "react-router-dom";
 import { useAuthStore } from "../stores/useAuthStore";
 
 export function useClinicId(){
-    return "11111111-1111-1111-1111-111111111111";
+    return useParams<{ clinicId: string }>().clinicId || '';
 }
 
 export function useDoctorId(){

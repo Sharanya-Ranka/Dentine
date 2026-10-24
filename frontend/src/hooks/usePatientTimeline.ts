@@ -12,8 +12,8 @@ export function usePatientTimeline(patientId: string | undefined) {
         .from('action_log')
         .select(`
           *,
-          actor:employee (
-            id,
+          actor:app_user (
+            id:user_id,
             name
           )
         `)

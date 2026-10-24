@@ -13,8 +13,8 @@ export function useTreatmentPlans(patientId: string | undefined) {
         .from('treatment_plan')
         .select(`
           *,
-          doctor:employee (
-            id,
+          doctor:app_user (
+            id:user_id,
             name
           )
         `)
