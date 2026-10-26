@@ -6,6 +6,7 @@ export interface PatientContact {
 export interface PatientInsurance {
   provider?: string;
   policy_number?: string;
+  coverage_amount?: number;
 }
 
 export interface PatientDetails {

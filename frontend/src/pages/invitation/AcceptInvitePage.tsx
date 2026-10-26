@@ -56,7 +56,7 @@ export const AcceptInvitePage: React.FC = () => {
 
   // 3. Unauthenticated state: Route to login or signup
   if (!user) {
-    const redirectUrl = encodeURIComponent(`/invites/accept?token=${token}`);
+    const redirectUrl = encodeURIComponent(`/invite?token=${token}`);
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
         <div className="max-w-md w-full bg-white p-8 rounded-lg border border-slate-200 shadow-xs text-center space-y-4">
@@ -77,7 +77,7 @@ export const AcceptInvitePage: React.FC = () => {
           </div>
           <div className="flex flex-col gap-2 pt-2">
             <Link
-              to={`/auth/signup?email=${encodeURIComponent(invite.invitee_email)}&redirect=${redirectUrl}`}
+              to={`/auth/login?email=${encodeURIComponent(invite.invitee_email)}&redirect=${redirectUrl}`}
               className="w-full py-2 px-3 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition-colors"
             >
               Create Account to Accept

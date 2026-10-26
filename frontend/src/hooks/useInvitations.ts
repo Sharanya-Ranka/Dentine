@@ -50,7 +50,7 @@ export function useAcceptInvitation() {
       queryClient.invalidateQueries({ queryKey: ["clinic-members"] });
       // Redirect directly into the newly joined clinic
       if (data && typeof data === "object" && "clinic_id" in data) {
-        navigate(`/dashboard?clinicId=${data.clinic_id}`);
+        navigate(`/clinics/${data.clinic_id}`);
       }
     },
   });

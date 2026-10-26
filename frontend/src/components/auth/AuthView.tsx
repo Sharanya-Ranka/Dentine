@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { useSearchParams } from 'react-router-dom';
 
 export function AuthView() {
   const { signInWithMagicLink, authError, clearAuthError } = useAuthStore();
-  const [email, setEmail] = useState('');
+  const [searchParams, ] = useSearchParams();
+  console.log( Object.fromEntries(searchParams));
+  const [email, setEmail] = useState(searchParams.get('email') || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -16,7 +19,7 @@ export function AuthView() {
     setIsSubmitting(true);
     setFormError(null);
 
-    const { error } = await signInWithMagicLink(email.trim());
+    const { error } = await signInWithMagicLink(email.trim(), searchParams.get('redirect') || null);
 
     setIsSubmitting(false);
     if (error) {

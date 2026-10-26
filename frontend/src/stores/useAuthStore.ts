@@ -11,7 +11,7 @@ interface AuthState {
   
   // Actions
   initialize: () => () => void;
-  signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>;
+  signInWithMagicLink: (email: string, redirect_to: string|null) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   clearAuthError: () => void;
 }
@@ -60,11 +60,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     return () => subscription.unsubscribe();
   },
 
-  signInWithMagicLink: async (email: string) => {
+  signInWithMagicLink: async (email: string, redirect_to: string|null) => {
+    console.log('Attempting to sign in with magic link for email:', email, 'Redirect to:', redirect_to);
     set({ authError: null });
+    const targetUrl = redirect_to
+    ? (redirect_to.startsWith('http') ? redirect_to : `${window.location.origin}${redirect_to}`)
+    : window.location.origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: targetUrl },
     });
     return { error: error ? new Error(error.message) : null };
   },

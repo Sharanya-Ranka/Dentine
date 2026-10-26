@@ -62,6 +62,7 @@ export default function App() {
         <Routes>
           {/* 1. Public Authentication Route */}
           <Route path="/login" element={<AuthView />} />
+          <Route path="/auth/login" element={<AuthView />} />
           <Route path="/invite" element={<AcceptInvitePage />} />
           {/* 2. Authenticated Boundary */}
           <Route element={<RequireAuth />}>
