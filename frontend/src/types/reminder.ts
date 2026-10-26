@@ -39,6 +39,7 @@ export type CreateReminderInput = {
   type: ReminderType;
   status?: ReminderStatus;
   details: ReminderDetails;
+  employee_id?: string | null;
 };
 
 export type UpdateReminderInput = {
