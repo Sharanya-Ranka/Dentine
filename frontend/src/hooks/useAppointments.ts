@@ -6,7 +6,7 @@ import type {
   CreateAppointmentInput,
 } from '../types/appointment';
 
-export function useAppointments(startDateIso: string, endDateIso: string) {
+export function useAppointments(clinic_id:string|undefined, startDateIso: string, endDateIso: string) {
   return useQuery({
     queryKey: ['appointments', startDateIso, endDateIso],
     queryFn: async (): Promise<Appointment[]> => {
@@ -33,6 +33,10 @@ export function useAppointments(startDateIso: string, endDateIso: string) {
       return (data as Appointment[]) || [];
     },
     enabled: Boolean(startDateIso && endDateIso),
+    select: (appointments) => {
+      // Filter appointments by clinic_id
+      return appointments.filter((appointment) => appointment.clinic_id === clinic_id);
+    }
   });
 }
 

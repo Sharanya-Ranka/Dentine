@@ -352,7 +352,7 @@ const CreatePrescriptionCard: React.FC<{
 // ============================================================================
 // COMPONENT: Historical Prescription Card (View vs Edit Controller)
 // ============================================================================
-const HistoricalPrescriptionCard: React.FC<{
+export const HistoricalPrescriptionCard: React.FC<{
   prescription: Prescription;
   patient: Patient;
 }> = ({ prescription, patient }) => {

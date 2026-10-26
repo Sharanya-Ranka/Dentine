@@ -20,7 +20,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
 }) => {
   const clinicId = useParams().clinicId || '';
   const doctorId = useAuthStore().user?.id || null;
-  const { data: patients, isLoading: isLoadingPatients } = usePatients();
+  const { data: patients, isLoading: isLoadingPatients } = usePatients(clinicId);
   const createMutation = useCreateAppointment();
 
   // Form states initialized directly from props
