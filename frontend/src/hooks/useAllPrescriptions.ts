@@ -20,7 +20,7 @@ export async function fetchAllPrescriptions(clinicId: string): Promise<Prescript
         .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (data as Prescription[]) || [];
+    return (data as unknown as Prescription[]) || [];
 }
 
 export function useAllPrescriptions(clinicId:string = '', searchQuery: string = '') {
