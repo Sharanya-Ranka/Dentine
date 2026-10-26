@@ -10,11 +10,7 @@ export async function fetchAllPrescriptions(clinicId: string): Promise<Prescript
         .from('prescription')
         .select(`
           *,
-          patient:patient (
-            id,
-            name,
-            details
-          ),
+          patient:patient (*),
           doctor:app_user (
             id:user_id,
             name

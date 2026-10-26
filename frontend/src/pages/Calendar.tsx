@@ -9,6 +9,7 @@ import {
 } from '../utils/istDateUtils';
 import { ScheduleModal } from '../components/calendar/ScheduleModal';
 import { AppointmentDetailsModal } from '../components/calendar/AppointmentDetailsModal';
+import { useClinicNavigation } from '../hooks/useClinicNavigation';
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 
@@ -54,7 +55,9 @@ export const CalendarPage: React.FC = () => {
     return d.toISOString();
   }, [weekDays]);
 
-  const { data: appointments, isLoading } = useAppointments(startWindowIso, endWindowIso);
+  const { clinicId } = useClinicNavigation();
+
+  const { data: appointments, isLoading } = useAppointments(clinicId, startWindowIso, endWindowIso);
 
   // Auto-scroll to 8:00 AM (Active clinic opening hour) on mount
   useEffect(() => {
