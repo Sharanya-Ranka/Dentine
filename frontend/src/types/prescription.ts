@@ -1,3 +1,5 @@
+import type { Patient } from "./patient";
+
 export type PrescriptionItem = {
   id: string; // crypto.randomUUID()
   name: string; // e.g. "Amoxicillin"
@@ -24,17 +26,5 @@ export type Prescription = {
     id: string;
     name: string;
   } | null;
-  patient?: {
-    id: string;
-    name: string;
-    details?: {
-      age?: number;
-      gender?: string;
-      contact?: {
-        phone?: string;
-        email?: string;
-      };
-      medical_alerts?: string[];
-    };
-  } | null;
+  patient?: Patient;
 };
