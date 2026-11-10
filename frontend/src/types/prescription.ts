@@ -1,4 +1,7 @@
 import type { Patient } from "./patient";
+import type { Database } from './database.types';
+
+export type PrescriptionType = Database['public']['Tables']['prescription']['Row'];
 
 export type PrescriptionItem = {
   id: string; // crypto.randomUUID()
@@ -28,3 +31,15 @@ export type Prescription = {
   } | null;
   patient?: Patient;
 };
+
+
+export type PrescriptionV2 = Omit<PrescriptionType, 'doctor_id' | 'patient_id' | 'details'> & {
+  details: PrescriptionItem[];
+  doctor?: {
+    id: string;
+    name: string;
+  } | null;
+  patient: Patient;
+};
+
+export type MedicationCatalog = Database['public']['Tables']['medication_catalog']['Row'];

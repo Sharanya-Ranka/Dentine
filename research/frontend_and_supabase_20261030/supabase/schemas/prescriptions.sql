@@ -9,6 +9,7 @@ create table medication_catalog (
   default_instructions text,             -- e.g. "Take after meals"
   is_active boolean not null default true,
   created_at timestamptz not null default timezone('utc', now())
+  updated_at timestamptz not null default timezone('utc', now())
 );
 
 -- 2. Prescriptions (Encounter header)

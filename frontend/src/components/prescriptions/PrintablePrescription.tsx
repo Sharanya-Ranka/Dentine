@@ -1,10 +1,10 @@
 import { forwardRef } from 'react';
 import type { Patient } from '../../types/patient';
-import type { Prescription } from '../../types/prescription';
+import type { PrescriptionV2 } from '../../types/prescription';
 
 interface PrintablePrescriptionProps {
   patient: Patient;
-  prescription: Prescription;
+  prescription: PrescriptionV2;
   clinicInfo?: {
     name: string;
     address: string;
@@ -16,7 +16,7 @@ interface PrintablePrescriptionProps {
 
 export const PrintablePrescription = forwardRef<HTMLDivElement, PrintablePrescriptionProps>(
   ({ patient, prescription, clinicInfo }, ref) => {
-    const items = prescription.details?.prescriptions || [];
+    const items = prescription.details || [];
     const dateStr = new Date(prescription.created_at).toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
@@ -117,12 +117,12 @@ export const PrintablePrescription = forwardRef<HTMLDivElement, PrintablePrescri
         </table>
 
         {/* Doctor's Advice / Special Notes */}
-        {prescription.details?.notes && (
+        {prescription.notes && (
           <div className="p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700 mb-8 break-inside-avoid">
             <strong className="block text-slate-900 text-[11px] uppercase tracking-wider mb-1">
               General Advice & Precautions:
             </strong>
-            <p className="whitespace-pre-line leading-relaxed">{prescription.details.notes}</p>
+            <p className="whitespace-pre-line leading-relaxed">{prescription.notes}</p>
           </div>
         )}
 

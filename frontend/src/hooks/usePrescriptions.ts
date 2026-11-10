@@ -1,45 +1,59 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
-import type { Prescription, PrescriptionDetails } from '../types/prescription';
+import type { PrescriptionV2, PrescriptionType, PrescriptionItem } from '../types/prescription';
 import type { Json } from '../types/database.types';
 
-export function usePrescriptions(patientId: string | undefined) {
+export function usePrescriptionsV2(clinicId: string | null  , patientId: string | null ) {
   return useQuery({
-    queryKey: ['prescriptions', patientId],
-    queryFn: async (): Promise<Prescription[]> => {
-      if (!patientId) return [];
+    queryKey: ['prescriptions', clinicId, patientId],
+    queryFn: async (): Promise<PrescriptionV2[]> => {
+      if (!clinicId) return [];
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('prescription')
         .select(`
           *,
+          patient:patient (*),
           doctor:app_user (
             id:user_id,
             name
           )
         `)
-        .eq('patient_id', patientId)
+        .eq('clinic_id', clinicId)
         .order('created_at', { ascending: false });
+        
+      if(patientId){
+        query = query.eq('patient_id', patientId);
+      }
+
+      const { data, error } = await query;
+
 
       if (error) throw new Error(error.message);
-      return (data as Prescription[]) || [];
+      return (data as unknown as PrescriptionV2[]) || [];
     },
-    enabled: Boolean(patientId),
+    enabled: Boolean(clinicId),
   });
 }
 
-export function useCreatePrescription(patientId: string) {
+
+
+export function useCreatePrescriptionV2() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
+      patientId,
       clinicId,
       doctorId,
       details,
+      notes,
     }: {
+      patientId: string;
       clinicId: string;
       doctorId?: string | null;
-      details: PrescriptionDetails;
+      details: PrescriptionItem[];
+      notes: string;
     }) => {
       const { data, error } = await supabase
         .from('prescription')
@@ -48,47 +62,83 @@ export function useCreatePrescription(patientId: string) {
           patient_id: patientId,
           doctor_id: doctorId || null,
           details: details as Json,
+          notes: notes,
         })
         .select()
         .single();
 
       if (error) throw new Error(error.message);
-      return data as Prescription;
+      return data as PrescriptionType;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['prescriptions', patientId] });
-      queryClient.invalidateQueries({ queryKey: ['patient_timeline', patientId] });
+    onSuccess: (prescription) => {
+      queryClient.invalidateQueries({ queryKey: ['prescriptions', prescription.clinic_id, prescription.patient_id] });
+      // queryClient.invalidateQueries({ queryKey: ['patient_timeline', patientId] });
     },
   });
 }
 
-export function useUpdatePrescription(patientId: string) {
+
+export function useUpdatePrescriptionV2() {
+  // For regulatory purposes, the only update that can be done is to cancel a prescription with an optional cancel message.
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
       id,
-      details,
+      cancel_reason,
     }: {
       id: string;
-      details: PrescriptionDetails;
+      cancel_reason?: string | null;
     }) => {
       const { data, error } = await supabase
         .from('prescription')
         .update({
-          details: details as Json,
-          updated_at: new Date().toISOString(),
+          cancel_reason: cancel_reason || null,
         })
         .eq('id', id)
         .select()
         .single();
 
       if (error) throw new Error(error.message);
-      return data as Prescription;
+      return data as PrescriptionType;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['prescriptions', patientId] });
-      queryClient.invalidateQueries({ queryKey: ['patient_timeline', patientId] });
+    onSuccess: (prescription) => {
+      queryClient.invalidateQueries({ queryKey: ['prescriptions', prescription.clinic_id, prescription.patient_id] });
+      queryClient.invalidateQueries({ queryKey: ['prescriptions', prescription.clinic_id, null] });
+      // queryClient.invalidateQueries({ queryKey: ['patient_timeline', patientId] });
+    },
+  });
+}
+
+export function useCancelPrescription() {
+  // For regulatory purposes, the only update that can be done is to cancel a prescription with an optional cancel message.
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      cancel_reason,
+    }: {
+      id: string;
+      cancel_reason?: string | null;
+    }) => {
+      const { data, error } = await supabase
+        .from('prescription')
+        .update({
+          status: 'cancelled',
+          cancel_reason: cancel_reason || null,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data as PrescriptionType;
+    },
+    onSuccess: (prescription) => {
+      queryClient.invalidateQueries({ queryKey: ['prescriptions', prescription.clinic_id, prescription.patient_id] });
+      queryClient.invalidateQueries({ queryKey: ['prescriptions', prescription.clinic_id, null] });
+      // queryClient.invalidateQueries({ queryKey: ['patient_timeline', patientId] });
     },
   });
 }

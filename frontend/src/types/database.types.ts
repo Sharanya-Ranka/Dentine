@@ -605,6 +605,56 @@ export type Database = {
           },
         ]
       }
+      medication_catalog: {
+        Row: {
+          clinic_id: string
+          created_at: string
+          default_dosage: string
+          default_duration_days: number
+          default_frequency: string
+          default_instructions: string | null
+          generic_name: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          clinic_id: string
+          created_at?: string
+          default_dosage: string
+          default_duration_days?: number
+          default_frequency: string
+          default_instructions?: string | null
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          clinic_id?: string
+          created_at?: string
+          default_dosage?: string
+          default_duration_days?: number
+          default_frequency?: string
+          default_instructions?: string | null
+          generic_name?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medication_catalog_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinic"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient: {
         Row: {
           clinic_id: string
@@ -700,30 +750,39 @@ export type Database = {
       }
       prescription: {
         Row: {
+          cancel_reason: string | null
           clinic_id: string
           created_at: string
           details: Json
           doctor_id: string | null
           id: string
+          notes: string | null
           patient_id: string
+          status: string
           updated_at: string
         }
         Insert: {
+          cancel_reason?: string | null
           clinic_id: string
           created_at?: string
           details?: Json
           doctor_id?: string | null
           id?: string
+          notes?: string | null
           patient_id: string
+          status?: string
           updated_at?: string
         }
         Update: {
+          cancel_reason?: string | null
           clinic_id?: string
           created_at?: string
           details?: Json
           doctor_id?: string | null
           id?: string
+          notes?: string | null
           patient_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: [
@@ -1018,6 +1077,7 @@ export type Database = {
           role: string
         }[]
       }
+      get_my_owned_clinic_ids: { Args: never; Returns: string[] }
       get_my_pending_invitations: {
         Args: never
         Returns: {

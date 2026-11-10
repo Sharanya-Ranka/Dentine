@@ -19,7 +19,7 @@ export function usePatients(clinicId?: string) {
   });
 }
 
-export function usePatient(id: string | undefined) {
+export function usePatient(id: string | null) {
   return useQuery({
     queryKey: ['patients', id],
     queryFn: async (): Promise<Patient> => {

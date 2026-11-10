@@ -29,6 +29,7 @@ export const CreatePatientModal: React.FC<CreatePatientModalProps> = ({
   const [alerts, setAlerts] = useState<string[]>([]);
   const [newAlertInput, setNewAlertInput] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  
 
   if (!isOpen) return null;
 
@@ -107,6 +108,7 @@ export const CreatePatientModal: React.FC<CreatePatientModalProps> = ({
   };
 
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
       <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-xl bg-white shadow-xl border border-slate-200 overflow-hidden">
         {/* Modal Header */}
@@ -315,5 +317,8 @@ export const CreatePatientModal: React.FC<CreatePatientModalProps> = ({
         </form>
       </div>
     </div>
+
+   
+      </>
   );
 };

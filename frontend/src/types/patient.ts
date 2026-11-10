@@ -1,3 +1,8 @@
+import { PatientDetails } from '../pages/patient/PatientDetails';
+import type { Database } from './database.types';
+
+type PatientType = Database['public']['Tables']['patient']['Row'];
+
 export interface PatientContact {
   phone?: string;
   email?: string;
@@ -26,4 +31,8 @@ export interface Patient {
   details: PatientDetails;
   created_at: string;
   updated_at: string;
+}
+
+export type PatientV2 = Omit<PatientType, 'details'> & {
+  details: PatientDetails;
 }

@@ -36,6 +36,7 @@ import { AdminEmployees } from './pages/admin/AdminEmployees';
 import { AdminProcedures } from './pages/admin/AdminProcedures';
 import { AdminLabInfo } from './pages/admin/AdminLabInfo';
 import { AcceptInvitePage } from './pages/invitation/AcceptInvitePage';
+import { AdminMedicationCatalog } from './pages/admin/AdminMedicationCatalog';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +104,7 @@ export default function App() {
                   <Route path="employees" element={<AdminEmployees />} />
                   <Route path="procedures" element={<AdminProcedures />} />
                   <Route path="labs" element={<AdminLabInfo />} />
+                  <Route path="medications" element={<AdminMedicationCatalog />} />
                 </Route>
               </Route>
             </Route>
