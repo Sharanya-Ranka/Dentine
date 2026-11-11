@@ -6,7 +6,7 @@ import type {
   CreateAppointmentInput,
 } from '../types/appointment';
 
-export function useAppointments(clinic_id:string|undefined, startDateIso: string, endDateIso: string) {
+export function useAppointments(clinic_id:string|undefined|null, startDateIso: string, endDateIso: string) {
   return useQuery({
     queryKey: ['appointments', startDateIso, endDateIso],
     queryFn: async (): Promise<Appointment[]> => {
