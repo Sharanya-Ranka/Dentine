@@ -29,22 +29,31 @@ CREATE INDEX idx_invitation_token ON public.invitation USING btree (token)
 CREATE POLICY "Clinic owners can delete clinic invitations" ON "public"."invitation"
   FOR DELETE
   TO "authenticated"
-  USING (public.user_is_owner(clinic_id, auth.uid()));
+  USING (public.user_is_owner(auth.uid(), clinic_id));
 
 CREATE POLICY "Clinic owners can issue invitations" ON "public"."invitation"
   FOR INSERT
   TO "authenticated"
-  WITH CHECK ((public.user_is_owner(clinic_id, auth.uid()) AND (inviter_id = auth.uid())));
+  WITH CHECK ((public.user_is_owner(auth.uid(), clinic_id) AND (inviter_id = auth.uid())));
 
 CREATE POLICY "Clinic owners can update clinic invitations" ON "public"."invitation"
   FOR UPDATE
   TO "authenticated"
-  USING (public.user_is_owner(clinic_id, auth.uid()))
-  WITH CHECK (public.user_is_owner(clinic_id, auth.uid()));
+  USING (public.user_is_owner(auth.uid(), clinic_id))
+  WITH CHECK (public.user_is_owner(auth.uid(), clinic_id));
 
 CREATE POLICY "Clinic owners can view issued clinic invitations" ON "public"."invitation"
   FOR SELECT
   TO "authenticated"
-  USING (public.user_is_owner(clinic_id, auth.uid()));
+  USING (public.user_is_owner(auth.uid(), clinic_id));
 
-GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."invitation" TO "anon", "authenticated", "postgres", "service_role";
+CREATE POLICY "Users can view clinic invitations issued to them" ON "public"."invitation"
+  FOR SELECT
+  TO "authenticated"
+  USING (public.email_belongs_to_user(auth.uid(), invitee_email));
+
+
+REVOKE ALL ON TABLE public.invitation FROM anon;
+
+GRANT DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE ON TABLE "public"."invitation" TO "postgres", "service_role";
+GRANT DELETE, INSERT, SELECT, UPDATE ON TABLE "public"."invitation" TO "authenticated";

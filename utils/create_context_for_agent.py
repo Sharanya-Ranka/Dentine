@@ -1,23 +1,32 @@
 import os
 
 REQUEST = """
-Write the global prescriptions page (showing all prescriptions in the clinic).
-Allow searching on the prescriptions based on medications, patient name, or notes.
-Do not allow creating another prescription.
-Create a compact form of the Viewable Prescription (with the name of the patient) and use it here.
+Write the email_belongs_to_user sql function. Use auth id to lookup the email and compare that against the one provided.
+See the usecase below.
+
+CREATE POLICY "Users can view clinic invitations issued to them" ON "public"."invitation"
+  FOR SELECT
+  TO "authenticated"
+  USING (public.email_belongs_to_user(auth.uid(), invitee_email));
+
+Also create 2 invitation hooks (useGetInvitationsBy, useGetInvitationsFor) to return invitations by a user (populated in an admin page), and for a user (through email, populated on personal page).
+
+Extend the personal page (currently stored within components/user, but will shift) frontend by having a section called "Invitations for you"
+
+Use components to render invitations (row cards / list item cards), with the ability to accept or decline them.
+Components are at frontend\\src\\components\\invitation
 """
 
 
 FILES_DESCRIPTION = dict(
-    DATABASE_FILES=[],
-    HELPER_COMPONENTS_FILES=[
-        r"frontend\src\components\prescriptions\ViewPrescription.tsx",
+    DATABASE_FILES=[
+        r"supabase\schemas\public\tables\invitation.sql",
+        r"supabase\schemas\public\tables\app_user.sql",
     ],
-    TYPES_FILES=[
-        r"frontend\src\types\prescription.ts",
-        r"frontend\src\types\patient.ts",
-    ],
-    QUERY_FILES=[r"frontend\src\hooks\usePrescriptions.ts"],
+    TYPES_FILES=[],
+    QUERY_FILES=[r"frontend\src\hooks\useInvitations.ts"],
+    HELPER_COMPONENTS_FILES=[],
+    PAGE_FILES=[r"frontend\src\components\user\DashboardView.tsx"],
 )
 
 

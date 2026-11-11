@@ -10,8 +10,9 @@ import { ClinicWorkspaceGuard } from './guards/ClinicWorkspaceGuard';
 import { AppLayout } from './layouts/AppLayout';
 
 // Pages
+import { UserDashboard } from './pages/user/UserDashboard';
 import { AuthView } from './components/auth/AuthView';
-import { DashboardView as UserDashboard } from './components/user/DashboardView';
+
 import { Dashboard as ClinicDashboard } from './pages/Dashboard';
 import { AllPatients } from './pages/AllPatients';
 import { CalendarPage } from './pages/Calendar';

@@ -1067,6 +1067,11 @@ export type Database = {
         Args: { clinic_name: string }
         Returns: string
       }
+      decline_clinic_invitation: { Args: { p_token: string }; Returns: Json }
+      email_belongs_to_user: {
+        Args: { p_email: string; p_user_id: string }
+        Returns: boolean
+      }
       get_invitation_preview: {
         Args: { p_token: string }
         Returns: {
