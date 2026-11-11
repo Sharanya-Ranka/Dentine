@@ -1,0 +1,16 @@
+{
+    "name": "frontend_and_supabase_test",
+    "private": true,
+    "scripts": {
+        "db:link": "supabase link --project-ref upbtjsfaayfpgvnwqefv",
+        "db:new": "supabase migration new",
+        "db:push": "supabase db push",
+        "db:pull": "supabase db pull",
+        "db:types": "supabase gen types typescript --project-id upbtjsfaayfpgvnwqefv > frontend/src/types/database.types.ts",
+        "db:new_function": "supabase functions new",
+        "supabase": "supabase"
+    },
+    "devDependencies": {
+        "supabase": "^2.117.0"
+    }
+}

@@ -6,6 +6,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Staff & Employees', path: 'employees', emoji: '👥' },
     { label: 'Clinic Procedures', path: 'procedures', emoji: '🩺' },
     { label: 'Lab Directory & Tests', path: 'labs', emoji: '🔬' },
+    { label: 'Medication Catalog', path: 'medications', emoji: '💊' },
   ];
 
   return (
@@ -14,7 +15,7 @@ export const AdminLayout: React.FC = () => {
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Clinic Administration</h1>
         <p className="text-xs text-slate-500 mt-1">
-          Configure operational staff, fee schedule procedures, and dental laboratory partners.
+          Configure operational staff, fee schedule procedures, dental laboratory partners and medication catalog.
         </p>
       </div>
 

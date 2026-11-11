@@ -107,7 +107,7 @@ export const AppointmentDetailsModal: React.FC<{
         <div className="flex justify-between items-center pt-3 border-t border-slate-100">
           {appointment.patient_id ? (
             <Link
-              to={`clinics/${appointment.clinic_id}/patients/${appointment.patient_id}/treatment-plans`}
+              to={`/clinics/${appointment.clinic_id}/patients/${appointment.patient_id}/details`}
               className="text-xs text-blue-600 hover:underline font-medium"
             >
               Open Patient Profile ↗

@@ -9,7 +9,8 @@
         "db:types": "supabase gen types typescript --project-id nwxolzjldlrwdrbkseka > frontend/src/types/database.types.ts",
         "db:types_filepath": "supabase gen types typescript --project-id nwxolzjldlrwdrbkseka",
         "db:new_function": "supabase functions new",
-        "supabase": "supabase"
+        "supabase": "supabase",
+        "supabase-start-db": "supabase start -x edge-runtime,gotrue,imgproxy,kong,logflare,mailpit,postgres-meta,postgrest,realtime,storage-api,studio,supavisor,vector"
     },
     "devDependencies": {
         "supabase": "^2.117.0"

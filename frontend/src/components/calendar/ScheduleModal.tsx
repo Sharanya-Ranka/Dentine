@@ -6,6 +6,8 @@ import { usePatients } from '../../hooks/usePatients';
 import { istDateTimeToUTC } from '../../utils/istDateUtils';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useParams } from 'react-router-dom';
+import type { Patient } from '../../types/patient';
+import { CreatePatientModal } from '../patient/CreatePatientModal';
 
 interface ScheduleModalProps {
   initialDate: Date;
@@ -74,12 +76,22 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
     }
   };
 
+  const [createdPatient, setCreatedPatient] = useState<Patient | null>(null);
+  const [isAddPatientOpen, setIsAddPatientOpen] = useState(false);
+
+  const handlePatientCreated = (newPatient: Patient) => {
+    setCreatedPatient(newPatient);
+    setPatientId(newPatient.id);
+    setIsAddPatientOpen(false);
+  };
+
   const dateLabel = new Intl.DateTimeFormat('en-IN', {
     timeZone: 'Asia/Kolkata',
     dateStyle: 'full',
   }).format(initialDate);
 
   return (
+    <>
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded-lg border border-slate-200 max-w-lg w-full p-6 shadow-2xl space-y-4">
         {/* Header */}
@@ -92,7 +104,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
             type="button"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 text-sm font-semibold"
-          >
+            >
             ✕
           </button>
         </div>
@@ -106,17 +118,36 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Patient Selection */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Select Patient
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-700">
+                Select Patient <span className="text-red-500">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsAddPatientOpen(true)}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+              >
+                <span className="text-sm leading-none font-bold">+</span> Add New Patient
+              </button>
+            </div>
             <select
               value={patientId}
               onChange={(e) => setPatientId(e.target.value)}
               className="w-full text-xs px-3 py-2 border border-slate-300 rounded bg-white outline-none focus:ring-1 focus:ring-blue-500"
               required
-            >
+              >
               <option value="">-- Choose Patient --</option>
               {isLoadingPatients && <option disabled>Loading patients...</option>}
+              {/* Optimistic/locally injected option if just created and cache hasn't flushed */}
+                {createdPatient && !patients?.some((p) => p.id === createdPatient.id) && (
+                  <option value={createdPatient.id}>
+                    {createdPatient.name}{' '}
+                    {createdPatient.details?.contact?.phone
+                      ? `(${createdPatient.details.contact.phone})`
+                      : ''}{' '}
+                    (New)
+                  </option>
+                )}
               {patients?.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name} {p.details?.contact?.phone ? `(${p.details.contact.phone})` : ''}
@@ -149,7 +180,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 onChange={(e) => setEndTime(e.target.value)}
                 className="w-full text-xs px-3 py-2 border border-slate-300 rounded bg-white outline-none focus:ring-1 focus:ring-blue-500"
                 required
-              />
+                />
             </div>
           </div>
 
@@ -163,7 +194,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 value={operatory}
                 onChange={(e) => setOperatory(Number(e.target.value))}
                 className="w-full text-xs px-3 py-2 border border-slate-300 rounded bg-white outline-none focus:ring-1 focus:ring-blue-500"
-              >
+                >
                 <option value={1}>Chair 1 (Main Operatory)</option>
                 <option value={2}>Chair 2 (Surgery / Implant)</option>
                 <option value={3}>Chair 3 (Orthodontics)</option>
@@ -178,7 +209,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
                 value={type}
                 onChange={(e) => setType(e.target.value as AppointmentType)}
                 className="w-full text-xs px-3 py-2 border border-slate-300 rounded bg-white outline-none focus:ring-1 focus:ring-blue-500"
-              >
+                >
                 <option value="consultation">Consultation</option>
                 <option value="procedure">Clinical Procedure</option>
                 <option value="emergency">Emergency Walk-in</option>
@@ -196,7 +227,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
               value={status}
               onChange={(e) => setStatus(e.target.value as AppointmentStatus)}
               className="w-full text-xs px-3 py-2 border border-slate-300 rounded bg-white outline-none focus:ring-1 focus:ring-blue-500"
-            >
+              >
               <option value="scheduled">Scheduled</option>
               <option value="confirmed">Confirmed with Patient</option>
               <option value="checked_in">Checked In (In Reception)</option>
@@ -214,7 +245,7 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full text-xs p-2.5 border border-slate-300 rounded outline-none focus:ring-1 focus:ring-blue-500"
-            />
+              />
           </div>
 
           {/* Actions */}
@@ -223,19 +254,29 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
               type="button"
               onClick={onClose}
               className="px-3.5 py-1.5 text-xs text-slate-600 bg-slate-100 hover:bg-slate-200 rounded font-medium"
-            >
+              >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending}
               className="px-4 py-1.5 text-xs text-white bg-blue-600 hover:bg-blue-700 rounded font-semibold disabled:opacity-50"
-            >
+              >
               {createMutation.isPending ? 'Booking...' : 'Confirm Booking'}
             </button>
           </div>
         </form>
       </div>
     </div>
+     {/* Embedded Create Patient Modal */}
+      {isAddPatientOpen && (
+        <CreatePatientModal
+          isOpen={isAddPatientOpen}
+          clinicId={clinicId}
+          onClose={() => setIsAddPatientOpen(false)}
+          onSuccess={handlePatientCreated}
+        />
+      )}
+              </>
   );
 };
